@@ -1,4 +1,5 @@
 #include <Events.h>
+#include <MixedMode.h>
 #include <USB.h>
 #include <Types.h>
 
@@ -139,6 +140,12 @@ void stateMachine(USBPB *_pb) {
 
 				prevButton = report[0];
 			}
+
+			// Call JCrsrTask to redraw the cursor immediately.
+			// Feels much more responsive than waiting for another interrupt.
+			// Could a race condition garble the cursor? Haven't seen it happen.
+			// if (*(char *)(0x174 + 7) & 1) // Uncomment to switch on shift key
+			CallUniversalProc(*(void **)0x8ee, kPascalStackBased);
 		}
 
 		pb = pbClean;
