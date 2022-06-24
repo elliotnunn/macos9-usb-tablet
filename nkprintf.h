@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdarg.h>
+#ifndef NKPRINTF_H
+#define NKPRINTF_H
 
 void nkprint(const char *);
+void nkprintf(const char *fmt, ...);
 
-static void nkprintf(const char *fmt, ...) {
-	va_list vargs;
-	char buf[512];
-	va_start(vargs, fmt);
-	vsprintf(buf, fmt, vargs);
-	nkprint(buf);
-}
+#endif

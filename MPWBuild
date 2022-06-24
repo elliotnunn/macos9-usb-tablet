@@ -1,7 +1,7 @@
 Set Exit 1
 NewFolder Build ≥Dev:Null || ()
 
-PPCAsm -o :Build:nkprint.s.x nkprint.s
+PPCAsm -o :Build:nkprintf.s.x nkprintf.s
 
 MrC -opt size -o :Build:USBTablet.c.x USBTablet.c
 
@@ -17,4 +17,4 @@ PPCLink -w -xm sharedlibrary ∂
 	"{PPCLibraries}PPCCRuntime.o" ∂
 	"{PPCLibraries}CursorDevicesGlue.o" ∂
 	:Build:USBTablet.c.x ∂
-	:Build:nkprint.s.x
+	:Build:nkprintf.s.x

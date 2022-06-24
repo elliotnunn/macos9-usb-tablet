@@ -10,7 +10,7 @@ PPCLink -xm sharedlibrary ∂
 	"{SharedLibraries}StdCLib" ∂
 	"{PPCLibraries}PPCCRuntime.o" ∂
 	:Build:DevTreeLoader.c.x ∂
-	:Build:nkprint.s.x
+	:Build:nkprintf.s.x
 
 Catenate :Build:USBTablet >>:Build:DevTreeLoader
 
