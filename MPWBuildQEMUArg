@@ -1,16 +1,26 @@
 Set Exit 1
 :MPWBuild
 
-MrC -opt size -proto strict -o :Build:DevTreeLoader.c.x DevTreeLoader.c
+For IsDryRun in 1 0
+	# Build PEF twice so that it knows its own binary size
+	If {IsDryRun}
+		Echo 1111
+	Else
+		Files -x b -n :Build:DevTreeLoader |
+			StreamEdit -d -e '/([0-9]+)®1b∞/ Print ®1'
+	End >:Build:PayloadOffset.inc
 
-PPCLink -xm sharedlibrary ∂
-	-w -init init ∂
-	-o :Build:DevTreeLoader ∂
-	"{SharedLibraries}InterfaceLib" ∂
-	"{SharedLibraries}StdCLib" ∂
-	"{PPCLibraries}PPCCRuntime.o" ∂
-	:Build:DevTreeLoader.c.x ∂
-	:Build:nkprintf.s.x
+	MrC -opt size -proto strict -o :Build:DevTreeLoader.c.x DevTreeLoader.c
+
+	PPCLink -xm sharedlibrary ∂
+		-w -init init ∂
+		-o :Build:DevTreeLoader ∂
+		"{SharedLibraries}InterfaceLib" ∂
+		"{SharedLibraries}StdCLib" ∂
+		"{PPCLibraries}PPCCRuntime.o" ∂
+		:Build:DevTreeLoader.c.x ∂
+		:Build:nkprintf.s.x
+End
 
 Catenate :Build:USBTablet >>:Build:DevTreeLoader
 

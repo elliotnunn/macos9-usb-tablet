@@ -35,9 +35,15 @@ OSErr init(CFragInitBlockPtr initBlock);
 
 OSErr init(CFragInitBlockPtr initBlock) {
 	void **romDriverHand;
-	long *driverPEF;
 	char *patch;
 	long i;
+
+	// The build script calculates the size of THIS binary
+	char *driverPEF = (char *)initBlock->fragLocator.u.inMem.address +
+#include ":Build:PayloadOffset.inc"
+	;
+
+	if (BUG) nkprintf("%s:%d new driver ptr=%#x\n", __FILE__, __LINE__, driverPEF);
 
 	// Get the handle whose master pointer we must change
 	*(short *)0xb9e = 0xffff; // TempInsertROMMapTrue
@@ -54,13 +60,6 @@ OSErr init(CFragInitBlockPtr initBlock) {
 	for (i = 0; i < sizeof patchTemplate; i++) {
 		((char *)patch)[i] = ((char *)patchTemplate)[i];
 	}
-
-	// Get address of this code fragment
-	driverPEF = initBlock->fragLocator.u.inMem.address;
-	do {
-		driverPEF++;
-	} while (*driverPEF != 'Joy!');
-	if (BUG) nkprintf("%s:%d new driver ptr=%#x\n", __FILE__, __LINE__, driverPEF);
 
 	// Change the master ptr persistently, every time this trap is called
 	*(void **)(patch + patchHandOffset) = romDriverHand;
