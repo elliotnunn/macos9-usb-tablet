@@ -7,30 +7,32 @@ Add this to your QEMU command line:
 	'! 1 -rot do dup 1 = if drop i c@ 100 + 1 else dup 2 / swap 1 and if i lzp 1 '\
 	'else i 1+ c@ i c@ over f0 and 4 lshift + swap f and -3 do dup lzd @ + lzp 1+'\
 	' fff and loop drop 2 then then +loop drop ; 20 parse PofzQ03tNaNZRr1z.4Bk.E.'\
-	'.YfHbwDfo.kU/oU6.zk2/.E.K5ik2.6.6.U4fA.YJ4EEuQD1v.E8b0FI1Y.I/YD1v.EHvT.A/dU6'\
-	'6cTyzYDHz0../6TyICv1zzzz.TzxwgrUPbUj.MDwsC4FWpOu.MzwwG5BpZE..ETy.U/E.fU6.Thx'\
-	'wULUP.4mSzk.AU2/.C.k.zTxU.7PCM1VUClU..81L.7MM.Ne/zk6tTkk.dUCdzmAtCTzzzzw6zkW'\
-	'Ab.2..E.7zk/0UTXz2..zzk.tDG3tPoc6zsa2T.E..2.2zs7.YzXz0U11zmCFU/6.e.KUjuCEY.E'\
-	'.e.JUU.4m..5z6HVMT3...kXjQviaU2s.68g..Di/.NiE.0gAx5tA.kY.U2ua2GY29jHh6.ET0k2'\
-	'/zlUV/ME5M.k/zos4gG9t/6HwDqM/j0.4ua.W3UE/Nu66TV./.F2QN.3bPD1uwDd0138A2EI/3A2'\
-	'0./2BW/HR...G.E22zk3YG.38.2M.zqt7QaJoMq3azolZ.47dRqJCzrFEFk/mIbFZ5rBZQbJj.KJ'\
-	'Xzys0NUw..UgG7nuU.Eog6/d24i0J9JUUGW.U2cID9N7QNc.U.9c32GM.EE7iuDzvc.Fqzy81CTb'\
-	'gtW.PClU.4.300GmzCk...9m0.Pz0UY26hWU.fk2U.C.s.9s06A61hgd2kU6UhaUU6R2UxoVcU.2'\
-	'.G.0uzqAoTDnz9VWQ4NxwyWvxCDE..E0UsxxzY5Xv.Q0zP8o/tU4OCpEUBm1f6T/vxRXpyRYUzt.'\
-	'WzVU.YH209..T.9yPtXnt.tYU5..TjlmEU/k.2./z21.K.mnr.DY.WBU..DySzcU/W.A..Dxy5cY'\
-	'0I.E.FDxYc8.iIG.AFDw5682iT06A8Tz2FrrKJBN7Wzz4GpLyT/s6KvzAU73sXWU6zmkk0607U7b'\
-	'Djws6./u6acY.0k/gB.1r6/cj.6/xJTwoThZgqE/IejdykU..E4.U1.0O61ajZc..lUU.zk.k.G0'\
-	'NcHVmvXU..1/WP6.s.4A.J9woThZX2qAsuqAkZXs2ajI.DcY/.Bw./m/J6A8xzs2MC.0/.4mUnq.'\
-	'I.//XE.ikaH5u8osu04..ARviqE0Kek4O42.vw3ckxR.Vrh2UU09tzDyWW120.DT3/tA.rtAkzm.'\
-	'..5yHrv.YiXE.iE0K.E8O4aU.g4.Eal6S7N6Uk.Fq69gtsjy.YDnz5.1AdBy6a.6..0ibbzxWzoj'\
-	'gXjbx2/MV4d765Y.E30MF5oPYs/7.HvcYq/7.E2zGuhkG2Y/D.iXx6.FTu02L.fS0y.29A.2.00/'\
-	'U8.0v80.ODik/jmBF.IU..k4C.J.z/6DzQrI/UKFW/.9jNmQ4.UA0/zwcHIJFMJFJ4jxW..2XUU8'\
-	'..jw/.V26/1.V.Ey1A1U03.FbLMs5NFGO36M36/e6.H0X5PswLvt470c.3AAe4/HC3U.F..18./3'\
-	'73BNTs00r/CwGFUF0.G/Qxc./EU0J4ic/Pp/ERDxnNLN3.5FiMTx1JKlgRaZiQjxZP43nPr7E.Dx'\
-	'XEZBJQaJHOQxqQqJXIV5nOINUN4vzS4JCOJ/oNL1vEq3FNatjNsxdNL7pIFPe2CdVNLxG.4FVNKV'\
-	'Iyq/GFb72NIFVQaBnQ4azPqZoM77iPCx1QrBVI4CMzrJgPaZbQqZ2hq3kO4BoP3/iI1lZ.Dw.t3A'\
-	'Lvm2.Nud.gac.Nk3G4c2..wUU..2. over + swap here >r 2000 allot here >r b64 her'\
-	'e r> here r@ here! lz here r> tuck - dev / " pef,AAPL,MacOS,PowerPC,prepare"'\
-	' property " Tab" encode-string " code,AAPL,MacOS,name" property'
+	'.YfHbwDfo.kU/oU6.zk2/.E.K5bk2.6.6.U4f8.YJ4EEu.D1v.E8b0FI1W.I/6D1v.EHv0.EPjuM'\
+	'0zzz/.N1sZ.U.zzwVUs5.C/..zzy.scDzCDnzMjxUU9/YD7s9RTxXU1VnCxKi.TzA.2WcU1I..Dx'\
+	'/Tt.IC.c..DxUrtA.UF6./Ty.bt4cYkE./TzU.M0cC2U..5wV05l.iuM1Dk/n.6/CUc2Uck/oUDg'\
+	'..0gA/./AjkZwHeM16.G./k2/205z/ME1M.U/HUPzgG9t/6HwNU5zj0.4ua.W/.46NkUK1UU/3GY'\
+	'Q..0fyaV3IcHk/E2A..FbxE2E33EB.E22GU3YEjw..2M.R4t7QjxZMq3aOIlZ.DxWR4J5QqJGREx'\
+	'jNKBmvUI/1k1zAkgGleE01GkLcxk/.G2EhQAZGX.E2VID2KScj.JanU4esNA/VjnzzxU..6.sMc/'\
+	'6zxnzzsEojrnwzmsU6OBwUY.iQTHz6/y1PU5Czo20/5PcCu1zT.00.I6vUNXz...w..6t861z/U.'\
+	'7zq81CyXTW.50r.04cjy1ET1ze.4/6zxJT1cE9VVxOTpwC.DY.k1.zm.tGk2.WTzzzy8.aAXzD.1'\
+	'Txy4EG1U.cF1bB..T679u60c04tbEyk..d44EU4EWpDy0679iUN.1J08Yyry.YVk.Y.EU5./c67P'\
+	'ykc//YAHzd2v/C1UW6CjU/GCDzm0K.c2ZYA1zvE1z6Nsgd.4FUFEW.9xTG72QoVk.zl.U.8.v.mk'\
+	'Ezk...67.bcXQzk2..Du6TcU1zk6../u7N3.2zmt2180U/p2Uzmt2120Vl5kWzxMdIKRxlZHKzzu'\
+	'904lJn5kSvrVX060FA3scU6YgnkXz060N5cXC..1j5te7..Y.TTwoB.0.qGZJJCxyThY..1/qzs7'\
+	'/C4..D.0VysZx7h..JE.UA.OAU7aj8b6/TjEUzU...1.m.4BwMpEoThbjnqAs/4AUbhcyciY.DcY'\
+	'/610MjTo54108.64/zu.w3./g24BUv9..lX1LCdYlUW.I5rU.040.DM5iANMEyE0S.O8h/W0Gzjx'\
+	'9WCYNsW0rfgkUYm...8Szev.Y6SMU63yFsqRzobXv68IkcbY.jUc/kaU.la..62g05WJ0RjcVA06'\
+	'44rwUuNBs6/GS/./dACgtUH4Ky6npzX2m.66mSNC.A/XgGm.fjTrz..4eDUay.RcZsU5K.Rs/eEL'\
+	'a4zwJUg.V.Ew0.Dy.q.4w.Lk/.Tz6h./U.9U..CxME..kE/0WzXE0Jn.ZJYs/9yXzQ.zzuOg5.5V'\
+	'6G.HzvDxu.5d6G1dTzDxiv3.1rI1rI.A30r1cS2Hp/jI81Y1zQ325uOgMLYvzF5JCOLNZNKDzMKl'\
+	'1.5BnA4HxNJ7GXUFa.Tw06E36A./.RTwYN47n.c21/jg2.aQb8.61zp25JIp3Ma3Iys2Nn.Q/../'\
+	'.6U.FG.0z0E41ADZEZ1xsq9mgczkZ2aYE3eakZUIK2phR3UU.UdEIg/0WMF0XJek.nFad6WdN/VW'\
+	'dLZL8./2F./2Mem/W2IY.2Jw.2LE.ubw.XE.F1VFIM/Bezoc00I62F.34zs...4/L.E/8TkS/.s/'\
+	'0E./64bM4I31zR5BjNLN3R4vzMIA.JKlgOKvzQaJqP43nQZ1z.4BjEZBJNJCLIH3m2LxnFa/kPab'\
+	'zNItYI5FsQ4brMKxZPax1OFxaQbJb3bNZaqZyRhteNJ6EPqFVQ2xVPaJnPpAjNItV3bNrI25SO3E'\
+	'.M5/Zzb72F43YMrBZQ4ZmOLGDtatjIXJUI4DgRKnzPaZbQqZ2ML1TO4BoP3/ahDtZIlRG6E1YiY1'\
+	'jc./b0/0XNk2..9Q.dV0X...U over + swap here >r 2000 allot here >r b64 here r>'\
+	' here r@ here! lz here r> tuck - dev / " pef,AAPL,MacOS,PowerPC,prepare" pro'\
+	'perty " Tab" encode-string " code,AAPL,MacOS,name" property'
 
 Do not add `via=pmu` to the QEMU argument `-M` as it will not work properly.
