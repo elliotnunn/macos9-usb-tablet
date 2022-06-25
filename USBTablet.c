@@ -45,6 +45,13 @@ char makeVendorSpecific68[] = {
 	'd','e','v','i','c','e','R','e','f',0,
 };
 
+// Reduce the cross-TOC glue code in the finished binary
+pascal OSErr (*MyPPostEvent)(EventKind, UInt32, EvQElPtr *) = &PPostEvent;
+#define PPostEvent MyPPostEvent
+
+long (*MyCallUniversalProc)(UniversalProcPtr, ProcInfoType, ...) = CallUniversalProc;
+#define CallUniversalProc MyCallUniversalProc
+
 enum {
 	stateInit,
 	stateFindInterface,
