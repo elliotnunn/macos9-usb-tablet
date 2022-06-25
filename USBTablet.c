@@ -7,16 +7,21 @@
 
 enum {
 	stateInit,
+	stateFindInterface,
+	stateOpenDevice,
+	stateNewInterfaceRef,
 	stateConfigureInterface,
 	stateFindNextPipe,
 	stateIntRead,
 };
 
 OSStatus returnNoErr(void);
-OSStatus interfaceInitialize(UInt32 interfaceNum, USBInterfaceDescriptorPtr pInterface, USBDeviceDescriptorPtr pDevice, USBInterfaceRef interfaceRef);
+OSStatus initialize(USBDeviceRef device, USBDeviceDescriptorPtr pDesc, UInt32 busPowerAvailable);
 void stateMachine(USBPB *pb);
 
-UInt8 ifnum;
+int state = stateInit;
+
+UInt8 interfacenum;
 
 USBPB pb;
 
@@ -28,7 +33,6 @@ USBPB pbClean = {
 	0, 0,           // reserved
 	0,              // usbStatus
 	stateMachine,   // usbCompletion
-	stateInit,      // usbRefcon
 };
 
 unsigned char report[16];
@@ -59,14 +63,14 @@ USBDriverDescription TheUSBDriverDescription = {
 	0x01, 0x00, finalStage, 0x00,           // version of driver
 
 	// Driver Loading Info
-	kUSBInterfaceMatchOnly,                 // Flags
+	0,                                      // Flags
 };
 
 USBClassDriverPluginDispatchTable TheClassDriverPluginDispatchTable = {
 	kClassDriverPluginVersion,              // Version of this structure
 	(void *)returnNoErr,                    // Hardware Validation Procedure
-	NULL,                                   // Initialization Procedure
-	interfaceInitialize,                    // Interface Initialization Procedure
+	initialize,                             // Initialization Procedure
+	NULL,                                   // Interface Initialization Procedure
 	(void *)returnNoErr,                    // Finalization Procedure
 	NULL,                                   // Driver Notification Procedure
 };
@@ -75,40 +79,77 @@ OSStatus returnNoErr(void) {
 	return noErr;
 }
 
-OSStatus interfaceInitialize(UInt32 interfaceNum, USBInterfaceDescriptorPtr pInterface, USBDeviceDescriptorPtr pDevice, USBInterfaceRef interfaceRef) {
-	(void)interfaceNum;
-	(void)pDevice;
+OSStatus initialize(USBDeviceRef device, USBDeviceDescriptorPtr pDesc, UInt32 busPowerAvailable) {
+	(void)pDesc;
+	(void)busPowerAvailable;
 
-	pbClean.usbReference = interfaceRef;
-	ifnum = pInterface->interfaceNumber;
+	pbClean.usbReference = device;
 	stateMachine(&pb);
 	return noErr;
+}
+
+static void wipePB(void) {
+	pb = pbClean;
 }
 
 void stateMachine(USBPB *_pb) {
 	(void)_pb; // use global pb instead
 
-	//nkprintf("stateMachine usbRefcon=%d usbStatus=%d\n", pb.usbRefcon, pb.usbStatus);
+	//nkprintf("stateMachine state=%d usbStatus=%d\n", state, pb.usbStatus);
 
-	switch (pb.usbRefcon) {
+	switch (state) {
 	case stateInit:
-		pb = pbClean;
-		pb.usbRefcon = stateConfigureInterface;
+		wipePB();
+
+		// Trust pb.usbReference from initialize()
+		pb.usbClassType = kUSBHIDInterfaceClass;
+		// pb.usbSubclass = 0; // already zero in our blank pb
+		// pb.usbProtocol = 0;
+
+		state = stateFindInterface;
+		USBFindNextInterface(&pb);
+		break;
+
+	case stateFindInterface:
+		interfacenum = pb.usb.cntl.WIndex;
+
+		// Comment these out because USBOpenDevice can trust PB from USBFindNextInterface()
+		// confignum = pb.usb.cntl.WValue;
+		// wipePB();
+		// pb.usb.cntl.WValue = confignum;
+
+		state = stateOpenDevice;
+		USBOpenDevice(&pb); // Synonym for USBSetConfiguration
+		break;
+
+	case stateOpenDevice:
+		wipePB();
+		pb.usb.cntl.WIndex = interfacenum;
+
+		state = stateNewInterfaceRef;
+		USBNewInterfaceRef(&pb);
+		break;
+
+	case stateNewInterfaceRef:
+		pbClean.usbReference = pb.usbReference; // save interface ref
+
+		wipePB();
+
+		state = stateConfigureInterface;
 		USBConfigureInterface(&pb);
 		break;
 
 	case stateConfigureInterface:
-		pb = pbClean;
-		pb.usbRefcon = stateFindNextPipe;
-
+		wipePB();
 		pb.usbFlags = kUSBIn;
 		pb.usbClassType = kUSBInterrupt;
 
+		state = stateFindNextPipe;
 		USBFindNextPipe(&pb);
+		break;
 
 	case stateFindNextPipe:
-		// Future calls will ask for the pipe reference
-		pbClean.usbReference = pb.usbReference;
+		pbClean.usbReference = pb.usbReference; // save pipe ref
 		// fall through
 
 	case stateIntRead:
@@ -148,12 +189,12 @@ void stateMachine(USBPB *_pb) {
 			CallUniversalProc(*(void **)0x8ee, kPascalStackBased);
 		}
 
-		pb = pbClean;
-		pb.usbRefcon = stateIntRead;
+		wipePB();
 		pb.usbBuffer = report;
 		pb.usbReqCount = sizeof report;
-		pb.usb.cntl.WIndex = ifnum;
+		pb.usb.cntl.WIndex = interfacenum;
 
+		state = stateIntRead;
 		USBIntRead(&pb);
 		break;
 	}
