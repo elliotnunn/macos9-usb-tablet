@@ -50,12 +50,6 @@ OSErr init(CFragInitBlockPtr initBlock) {
 	romDriverHand = (void **)GetResource('usbd', -20779);
 	if (BUG) nkprintf("%s:%d ROM usbd pre-patch: hand=%#x ptr=%#x\n", __FILE__, __LINE__, romDriverHand, *romDriverHand);
 
-	// If handle is already in RAM then do not re-patch
-	if (*romDriverHand < *(void **)0x2ae) {
-		if (BUG) nkprintf("%s:%d already patched\n", __FILE__, __LINE__);
-		return paramErr;
-	}
-
 	patch = NewPtr(sizeof patchTemplate);
 	for (i = 0; i < sizeof patchTemplate; i++) {
 		((char *)patch)[i] = ((char *)patchTemplate)[i];
