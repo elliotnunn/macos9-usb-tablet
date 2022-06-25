@@ -137,6 +137,9 @@ static void wipePB(void) {
 }
 
 void stateMachine(USBPB *_pb) {
+	// Calling through a function pointer saves a LOT of cross-TOC glue
+	OSStatus (*funcPtr)(USBPB *);
+
 	(void)_pb; // use global pb instead
 
 	//nkprintf("stateMachine state=%d usbStatus=%d\n", state, pb.usbStatus);
@@ -151,7 +154,7 @@ void stateMachine(USBPB *_pb) {
 		// pb.usbProtocol = 0;
 
 		state = stateFindInterface;
-		USBFindNextInterface(&pb);
+		funcPtr = USBFindNextInterface;
 		break;
 
 	case stateFindInterface:
@@ -163,7 +166,7 @@ void stateMachine(USBPB *_pb) {
 		// pb.usb.cntl.WValue = confignum;
 
 		state = stateOpenDevice;
-		USBOpenDevice(&pb); // Synonym for USBSetConfiguration
+		funcPtr = USBOpenDevice; // Synonym for USBSetConfiguration
 		break;
 
 	case stateOpenDevice:
@@ -171,7 +174,7 @@ void stateMachine(USBPB *_pb) {
 		pb.usb.cntl.WIndex = interfacenum;
 
 		state = stateNewInterfaceRef;
-		USBNewInterfaceRef(&pb);
+		funcPtr = USBNewInterfaceRef;
 		break;
 
 	case stateNewInterfaceRef:
@@ -180,7 +183,7 @@ void stateMachine(USBPB *_pb) {
 		wipePB();
 
 		state = stateConfigureInterface;
-		USBConfigureInterface(&pb);
+		funcPtr = USBConfigureInterface;
 		break;
 
 	case stateConfigureInterface:
@@ -189,7 +192,7 @@ void stateMachine(USBPB *_pb) {
 		pb.usbClassType = kUSBInterrupt;
 
 		state = stateFindNextPipe;
-		USBFindNextPipe(&pb);
+		funcPtr = USBFindNextPipe;
 		break;
 
 	case stateFindNextPipe:
@@ -239,7 +242,9 @@ void stateMachine(USBPB *_pb) {
 		pb.usb.cntl.WIndex = interfacenum;
 
 		state = stateIntRead;
-		USBIntRead(&pb);
+		funcPtr = USBIntRead;
 		break;
 	}
+
+	funcPtr(&pb);
 }
