@@ -5,6 +5,46 @@
 
 #include "nkprintf.h"
 
+// Change the device class to FF (vendor specific), to make it unappealing
+// to drivers that might replace this one later in boot.
+// The USB Expert respects the Name Registry as a source of truth.
+// According to the published USB search algorithm, this driver should "win"
+// over a class driver, but because we pretend to be a ROM resource,
+// we lose and get replaced by a HID driver from the USB Device Extension.
+// This is done in 68k assembly due to our critical space shortage.
+char makeVendorSpecific68[] = {
+	0x00,0x00,0x00,0x00, // deviceRef: dc.l 0
+
+	0x4e,0x56,0xff,0xe8, // link.w  a6,#-$18
+
+	0x2f,0x0f,           // move.l  sp,-(sp)            ; cookie at -$18(a6)
+	0x70,0x07,           // moveq   #7,d0               ; RegistryEntryIterateCreate
+	0xab,0xe9,           // dc.w    $abe9
+
+	0x48,0x78,0x00,0x04, // pea     4                   ; propertySize
+	0x48,0x7a,0xff,0xec, // pea     deviceRef           ; propertyValue
+	0x48,0x7a,0x00,0x3a, // pea     #'deviceRef'        ; propertyName
+	0x48,0x6e,0xff,0xfc, // pea     -$04(a6)            ; done
+	0x48,0x6e,0xff,0xec, // pea     -$14(a6)            ; foundEntry
+	0x48,0x78,0x00,0x05, // pea     $05                 ; relationship
+	0x48,0x6e,0xff,0xe8, // pea     -$18(a6)            ; cookie
+	0x70,0x0b,           // moveq   #$b,d0              ; RegistryEntrySearch
+	0xab,0xe9,           // dc.w    $abe9
+
+	0x48,0x78,0x00,0x04, // pea     4                   ; propertySize
+	0x48,0x78,0x0a,0x06, // pea     $a06                ; propertyValue = minusOne
+	0x48,0x7a,0x00,0x0e, // pea     #'DeviceClass'      ; propertyName
+	0x48,0x6e,0xff,0xec, // pea     -$14(a6)            ; entryID
+	0x70,0x18,           // moveq   #$18,d0             ; RegistryPropertySet
+	0xab,0xe9,           // dc.w    $abe9
+
+	0x4e,0x5e,           // unlk    a6
+	0x4e,0x75,           // rts
+
+	'D','e','v','i','c','e','C','l','a','s','s',0,
+	'd','e','v','i','c','e','R','e','f',0,
+};
+
 enum {
 	stateInit,
 	stateFindInterface,
@@ -82,6 +122,10 @@ OSStatus returnNoErr(void) {
 OSStatus initialize(USBDeviceRef device, USBDeviceDescriptorPtr pDesc, UInt32 busPowerAvailable) {
 	(void)pDesc;
 	(void)busPowerAvailable;
+
+	// Hack to prevent replacement when we masquerade as a ROM resource
+	*(USBDeviceRef *)makeVendorSpecific68 = device;
+	CallUniversalProc((void *)(makeVendorSpecific68 + 4), kPascalStackBased);
 
 	pbClean.usbReference = device;
 	stateMachine(&pb);
