@@ -180,8 +180,9 @@ void stateMachine(USBPB *_pb) {
 		break;
 
 	case stateOpenDevice:
-		wipePB();
-		pb.usb.cntl.WIndex = interfacenum;
+		// Comment these out because USBNewInterfaceRef can still trust PB from USBFindNextInterface()
+		// wipePB();
+		// pb.usb.cntl.WIndex = interfacenum;
 
 		state = stateNewInterfaceRef;
 		funcPtr = USBNewInterfaceRef;
