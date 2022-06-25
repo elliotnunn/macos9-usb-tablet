@@ -66,7 +66,7 @@ OSStatus returnNoErr(void);
 OSStatus initialize(USBDeviceRef device, USBDeviceDescriptorPtr pDesc, UInt32 busPowerAvailable);
 void stateMachine(USBPB *pb);
 
-int state = stateInit;
+int gState = stateInit;
 
 UInt8 interfacenum;
 
@@ -146,6 +146,9 @@ static void wipePB(void) {
 void stateMachine(USBPB *_pb) {
 	// Calling through a function pointer saves a LOT of cross-TOC glue
 	OSStatus (*funcPtr)(USBPB *);
+
+	// Keeping a global copy is more efficient
+	int state = gState;
 
 	(void)_pb; // use global pb instead
 
@@ -252,6 +255,8 @@ void stateMachine(USBPB *_pb) {
 		funcPtr = USBIntRead;
 		break;
 	}
+
+	gState = state;
 
 	funcPtr(&pb);
 }
