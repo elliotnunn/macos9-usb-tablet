@@ -15,13 +15,13 @@
 // Patch to "re-patch" the ROM resource handle
 // Apply to any trap taking a handle in a0
 // Come-from patch is protected when the PowerPC Resource Manager is installed
-short patchTemplate[] = {
-	0x6006,                 //  +0          bra.s   mycode    (come-from patch sig)
-	0x4ef9, 0x0000, 0x0000, //  +2  orig    jmp     $00000000 (come-from patch sig)
-	0xb1fc, 0x0000, 0x0000, //  +8  mycode  cmp.l   #$00000000,a0
-	0x6606,                 //  +e          bne.s   escape
-	0x20bc, 0x0000, 0x0000, // +10          move.l  #$00000000,(a0)
-	0x60ea,                 // +16  escape  bra.s   orig
+char patch[] = {
+	0x60,0x06,                      //  +0          bra.s   mycode    (come-from patch sig)
+	0x4e,0xf9,0x00,0x00,0x00,0x00,  //  +2  orig    jmp     $00000000 (come-from patch sig)
+	0xb1,0xfc,0x00,0x00,0x00,0x00,  //  +8  mycode  cmp.l   #$00000000,a0
+	0x66,0x06,                      //  +e          bne.s   escape
+	0x20,0xbc,0x00,0x00,0x00,0x00,  // +10          move.l  #$00000000,(a0)
+	0x60,0xea,                      // +16  escape  bra.s   orig
 };
 
 #define patchHandOffset 0xa
@@ -35,8 +35,6 @@ OSErr init(CFragInitBlockPtr initBlock);
 
 OSErr init(CFragInitBlockPtr initBlock) {
 	void **romDriverHand;
-	char *patch;
-	long i;
 
 	// The build script calculates the size of THIS binary
 	char *driverPEF = (char *)initBlock->fragLocator.u.inMem.address +
@@ -49,11 +47,6 @@ OSErr init(CFragInitBlockPtr initBlock) {
 	*(short *)0xb9e = 0xffff; // TempInsertROMMapTrue
 	romDriverHand = (void **)GetResource('usbd', -20779);
 	if (BUG) nkprintf("%s:%d ROM usbd pre-patch: hand=%#x ptr=%#x\n", __FILE__, __LINE__, romDriverHand, *romDriverHand);
-
-	patch = NewPtr(sizeof patchTemplate);
-	for (i = 0; i < sizeof patchTemplate; i++) {
-		((char *)patch)[i] = ((char *)patchTemplate)[i];
-	}
 
 	// Change the master ptr persistently, every time this trap is called
 	*(void **)(patch + patchHandOffset) = romDriverHand;
@@ -68,6 +61,6 @@ OSErr init(CFragInitBlockPtr initBlock) {
 		nkprintf("%s:%d ROM usbd post-patch hand=%#x ptr=%#x\n", __FILE__, __LINE__, romDriverHand, *romDriverHand);
 	}
 
-	// Ensure that this fragment is unloaded
-	return paramErr;
+	// Ensure that this fragment's globals last as long as the system
+	return noErr;
 }
