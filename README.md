@@ -1,4 +1,4 @@
-Add this to your QEMU command line:
+Add this to your QEMU command line for Mac OS 9 mouse integration:
 
 	-device usb-tablet -prom-env 'use-nvramrc?=true' -prom-env nvramrc=\
 	': b64 do 0 4 0 do 6 lshift i j + c@ 2e - dup b > 7 and - dup 25 > 6 and - or'\
@@ -35,4 +35,22 @@ Add this to your QEMU command line:
 	' here r@ here! lz here r> tuck - dev / " pef,AAPL,MacOS,PowerPC,prepare" pro'\
 	'perty " Tab" encode-string " code,AAPL,MacOS,name" property'
 
-Do not add `via=pmu` to the QEMU argument `-M` as it will not work properly.
+Credit to kanjitalk755 for the original
+[macos9-usb-tablet](https://github.com/kanjitalk755/macos9-usb-tablet).
+
+## Bugs and limitations
+
+- Only Mac OS 9.1+ are supported. Mac OS 9.0.x seems to special-case HID devices.
+- Right-clicking works but scrolling does not.
+- Do not add `via=pmu` to the QEMU argument `-M`. It will not work properly.
+- The driver and loader are *very* tightly coded to a <2 KB limit to work around
+  an Open Firmware bug.
+- Mac OS implementation details are exploited to get the driver loaded and to
+  keep to the size limit.
+  - The loader replaces the mouse driver ROM resource with the tablet driver
+  - The replacement is done in a 68k head-patch on the HSetState trap, in order
+    to survive the reinstallation of the Resource Manager.
+  - The driver modifies the tablet's entry in the Name Registry to prevent any
+    alternative driver from being loaded when the filesystem comes up.
+  - This is done in 68k code to keep the driver under size.
+- It would be more convenient to integrate this tablet driver into QEMU itself.
