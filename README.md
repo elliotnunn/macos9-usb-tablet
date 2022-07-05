@@ -53,4 +53,7 @@ Credit to kanjitalk755 for the original
   - The driver modifies the tablet's entry in the Name Registry to prevent any
     alternative driver from being loaded when the filesystem comes up.
   - This is done in 68k code to keep the driver under size.
+- Cameron Kaiser rightly points out that the HSetState patch imposes some
+  [runtime overhead](https://oldvcr.blogspot.com/2022/07/a-brief-dive-into-power-mac-inits-and.html).
+  Certainly fixable at the expense of code size.
 - It would be more convenient to integrate this tablet driver into QEMU itself.
