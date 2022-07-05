@@ -55,5 +55,4 @@ Link -model far ∂
 	"{CLibraries}StdCLib.o" ∂
 	:Build:ArgGenerator.c.o
 
-# Shrink the binary
 :Build:ArgGenerator LoaderScript.fs :Build:DevTreeLoader.lzss
